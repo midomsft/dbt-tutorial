@@ -7,14 +7,19 @@
     Try changing "table" to "view" below
 */
 
-{{ config(materialized='table') }}
+{{ config(materialized='view') }}
 
 with source_data as (
 
-    select 'test' as acolumn
-    union all
-    select null as acolumn
-
+SELECT pc.[ProductCategoryID] ParentProductCategoryId
+	   ,pcp.ProductCategoryID
+      ,pc.[Name] ParentCategory
+	  ,pcp.Name Category
+      ,pc.[rowguid]
+      ,pc.[ModifiedDate]
+  FROM [ProductCategory] pc
+  inner join [ProductCategory] pcp on pc.productcategoryid = pcp.parentproductcategoryid
+  
 )
 
 select *
