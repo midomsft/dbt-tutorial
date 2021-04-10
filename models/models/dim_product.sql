@@ -7,26 +7,27 @@
     Try changing "table" to "view" below
 */
 
-{{ config(materialized='view') }}
+{{ config(materialized='table') }}
 
 with source_data as (
 
-    SELECT [ProductID]
+select 
+[ProductID]
       ,[Name]
       ,[ProductNumber]
       ,[Color]
       ,[StandardCost]
       ,[ListPrice]
-      ,isnull([Size], 'N/A') Size
-      ,isnull([Weight],0) Weight
-      ,[ProductCategoryID]
+      ,[Size]
+      ,[Weight]
+      ,p.[ProductCategoryID]
       ,[ProductModelID]
       ,[SellStartDate]
-      ,isnull([SellEndDate],'1-jan-2999') SellEndDate
-      ,isnull([DiscontinuedDate],'1-jan-2999') DiscontinuedDate
-      ,[rowguid]
-      ,[ModifiedDate]
-  FROM [dbo].[product]
+      ,[SellEndDate]
+      ,[DiscontinuedDate]
+      ,pcp.Category ProductCategory
+from {{ref('stg_product')}} p INNER JOIN {{ref('stg_productt_category')}} pcp on p.ProductCategoryID = pcp.productcategoryid
+  
 )
 
 select *
